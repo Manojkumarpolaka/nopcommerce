@@ -1,0 +1,82 @@
+---
+- name: Installing nop commerce
+  hosts: all
+  become: yes
+  tasks:
+    - name: update apt repo and cache
+      apt:
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
+    - name: Register the Microsoft key
+      ansible.builtin.get_url:
+        url: https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+      when: ansible_facts['os_family'] == "Debian"
+    - name: Install the required dependencies
+      ansible.builtin.dpkg_selections:
+        name: packages-microsoft-prod.deb
+        selection: install
+      when: ansible_facts['os_family'] == "Debian"
+    - name: Install .NET Core Runtime
+      package:
+        name:
+          - apt-transport-https
+          - aspnetcore-runtime-6.0
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+    - name: install nginx
+      package:
+        name: nginx
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+    - name: configure nginx as a reverse proxy
+      ansible.builtin.template:
+        dest: /etc/nginx/sites-available/default
+        src: 'default.j2'
+      when: ansible_facts['os_family'] == "Debian"
+    - name: Create a directory for nop commerce
+      ansible.builtin.file:
+        path: /var/www/nopCommerce450
+        state: directory
+      when: ansible_facts['os_family'] == "Debian"
+    - name: Download nopCommerce
+      ansible.builtin.get_url:
+        url: https://github.com/nopSolutions/nopCommerce/releases/download/release-4.50.1/nopCommerce_4.50.1_NoSource_linux_x64.zip
+        dest: /var/www/nopCommerce450
+      when: ansible_facts['os_family'] == "Debian"
+    - name: Unzip nopCommerce
+      ansible.builtin.unarchive:
+        src: /var/www/nopCommerce450/nopCommerce_4.50.1_NoSource_linux_x64.zip
+        dest: /var/www/nopCommerce450
+      when: ansible_facts['os_family'] == "Debian"
+    - name: Create a directory for bin
+      ansible.builtin.file:
+        path: /var/www/nopCommerce450/bin
+        state: directory
+      when: ansible_facts['os_family'] == "Debian"
+    - name: Create a directory for logs
+      ansible.builtin.file:
+        path: /var/www/nopCommerce450/logs
+        state: directory
+      when: ansible_facts['os_family'] == "Debian"
+    - name: change a ownership of directory
+      ansible.builtin.file:
+        path: /var/www/nopCommerce450
+        state: directory
+        group: www-data
+        owner: www-data
+      when: ansible_facts['os_family'] == "Debian"
+    - name: configure nginx as a reverse proxy
+      ansible.builtin.template:
+        dest: /etc/systemd/system/nopCommerce450.service
+        src: 'nopCommerce450.service.j2'
+      when: ansible_facts['os_family'] == "Debian"
+    - name: start nopCommerce450.service
+      ansible.builtin.systemd:
+        name: 'nopCommerce450.service'
+        state: started
+      when: ansible_facts['os_family'] == "Debian"
+    - name: start nginx.service
+      ansible.builtin.systemd:
+        name: 'nginx.service'
+        state: restarted
+      when: ansible_facts['os_family'] == "Debian"

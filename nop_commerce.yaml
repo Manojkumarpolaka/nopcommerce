@@ -53,6 +53,7 @@
       ansible.builtin.unarchive:
         src: /var/www/nopCommerce450/nopCommerce_4.50.1_NoSource_linux_x64.zip
         dest: /var/www/nopCommerce450
+        remote_src: yes
       when: ansible_facts['os_family'] == "Debian"
     - name: Create a directory for bin
       ansible.builtin.file:

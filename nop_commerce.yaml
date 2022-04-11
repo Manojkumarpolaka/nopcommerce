@@ -20,8 +20,7 @@
     - name: Install .NET Core Runtime
       package:
         name:
-          - apt-transport-https
-          - aspnetcore-runtime-6.0
+          - "apt-transport-https aspnetcore-runtime-6.0"
         state: present
       when: ansible_facts['os_family'] == "Debian"
     - name: install nginx

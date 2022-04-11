@@ -49,6 +49,13 @@
         url: https://github.com/nopSolutions/nopCommerce/releases/download/release-4.50.1/nopCommerce_4.50.1_NoSource_linux_x64.zip
         dest: /var/www/nopCommerce450
       when: ansible_facts['os_family'] == "Debian"
+    - name: installing Unzip
+      apt:
+        name:
+          - unzip
+        update_cache: yes
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
     - name: Unzip nopCommerce
       ansible.builtin.unarchive:
         src: /var/www/nopCommerce450/nopCommerce_4.50.1_NoSource_linux_x64.zip

@@ -13,9 +13,7 @@
         dest: .
       when: ansible_facts['os_family'] == "Debian"
     - name: Install the required dependencies
-      ansible.builtin.dpkg_selections:
-        name: packages-microsoft-prod.deb
-        selection: install
+      apt: deb=.
       when: ansible_facts['os_family'] == "Debian"
     - name: Make sure HTTPS is supported by apt
       apt:

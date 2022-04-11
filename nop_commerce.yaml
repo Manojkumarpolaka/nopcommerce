@@ -17,10 +17,17 @@
         name: packages-microsoft-prod.deb
         selection: install
       when: ansible_facts['os_family'] == "Debian"
-    - name: Install apt-transport-https
+    - name: Make sure HTTPS is supported by apt
       apt:
         name:
-          - apt-transport-https aspnetcore-runtime-6.0
+          - apt-transport-https
+        update_cache: no
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+    - name: Install .NET Core
+      apt:
+        name:
+          - aspnetcore-runtime-6.0
         update_cache: yes
         state: present
       when: ansible_facts['os_family'] == "Debian"

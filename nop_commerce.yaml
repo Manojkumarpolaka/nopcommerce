@@ -10,10 +10,10 @@
     - name: Register the Microsoft key
       ansible.builtin.get_url:
         url: https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
-        dest: .
+        dest: ./packages-microsoft-prod.deb
       when: ansible_facts['os_family'] == "Debian"
     - name: Install the required dependencies
-      apt: deb=.
+      apt: deb=./packages-microsoft-prod.deb
       when: ansible_facts['os_family'] == "Debian"
     - name: Make sure HTTPS is supported by apt
       apt:

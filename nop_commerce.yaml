@@ -78,6 +78,7 @@
         state: directory
         group: www-data
         owner: www-data
+        recurse: yes
       when: ansible_facts['os_family'] == "Debian"
     - name: configure nginx as a reverse proxy
       ansible.builtin.template:
